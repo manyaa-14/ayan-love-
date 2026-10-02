@@ -1409,7 +1409,9 @@ function updateProgress() {
     .textContent = totalProgress + "%";
 
 
-  /* Unlock confidential files */
+  /* =========================================
+     UNLOCK CONFIDENTIAL FILES
+  ========================================= */
 
   if (
     evidenceVerified >= 3 &&
@@ -1427,10 +1429,17 @@ function updateProgress() {
 
     card.querySelector("small").textContent =
       "✓ CLEARANCE GRANTED";
+
+    showClearancePopup(
+      "CONFIDENTIAL CLEARANCE",
+      "A new level of classified information is now available."
+    );
   }
 
 
-  /* Unlock restricted area */
+  /* =========================================
+     UNLOCK RESTRICTED AREA
+  ========================================= */
 
   if (
     evidenceVerified === totalEvidence &&
@@ -1448,6 +1457,55 @@ function updateProgress() {
 
     card.querySelector("small").textContent =
       "✓ MAXIMUM CLEARANCE";
-  }
 
+    showClearancePopup(
+      "MAXIMUM CLEARANCE",
+      "The entire investigation has been completed. Restricted access is now available."
+    );
+  }
+}
+
+
+/* =========================================
+   CLEARANCE POPUP
+========================================= */
+
+function showClearancePopup(title, message) {
+
+  const popup =
+    document.getElementById("clearancePopup");
+
+  const titleElement =
+    document.getElementById("clearanceTitle");
+
+  const messageElement =
+    document.getElementById("clearanceMessage");
+
+  titleElement.textContent = title;
+  messageElement.textContent = message;
+
+  popup.classList.add("active");
+
+  const box =
+    popup.querySelector(".clearance-box");
+
+  box.classList.remove("unlock-flash");
+
+  // Restart animation
+  void box.offsetWidth;
+
+  box.classList.add("unlock-flash");
+}
+
+
+/* =========================================
+   CLOSE CLEARANCE POPUP
+========================================= */
+
+function closeClearancePopup() {
+
+  const popup =
+    document.getElementById("clearancePopup");
+
+  popup.classList.remove("active");
 }
