@@ -15,7 +15,191 @@ let restrictedUnlocked = false;
 
 const totalEvidence = 6;
 const totalMissions = 3;
+/* =========================================
+   SECRET EVIDENCE SYSTEM
+========================================= */
 
+let secretSequence = [];
+let secretAttempts = 0;
+let secretUnlocked = false;
+
+const correctSecretSequence = ["3", "1", "6"];
+
+function checkSecretSequence(number) {
+  if (secretUnlocked) return;
+
+  secretSequence.push(String(number));
+
+  // Only keep the latest 3 exhibits
+  if (secretSequence.length > 3) {
+    secretSequence.shift();
+  }
+
+  // Correct sequence discovered
+  if (
+    secretSequence.length === 3 &&
+    secretSequence[0] === "3" &&
+    secretSequence[1] === "1" &&
+    secretSequence[2] === "6"
+  ) {
+    secretUnlocked = true;
+
+    setTimeout(() => {
+      alert(
+        "⚠️ ANOMALY DETECTED\n\n" +
+        "You discovered evidence that was not listed in the original case file."
+      );
+
+      showSecretEvidence();
+    }, 400);
+
+    return;
+  }
+
+  // Once 3 exhibits have been selected, check if it was wrong
+  if (secretSequence.length === 3) {
+    secretAttempts++;
+
+    secretSequence = [];
+
+    setTimeout(() => {
+      if (secretAttempts === 1) {
+        alert(
+          "CASE NOTE 🔎\n\n" +
+          "Some evidence appears to be connected.\n" +
+          "The exhibit numbers may matter."
+        );
+      }
+
+      if (secretAttempts === 2) {
+        alert(
+          "ADDITIONAL HINT 🧩\n\n" +
+          "The hidden evidence seems to begin with\n" +
+          "the exhibit connected to \"Meri Bachii\"."
+        );
+      }
+
+      if (secretAttempts >= 3) {
+        alert(
+          "FINAL HINT 🔐\n\n" +
+          "The sequence begins with Exhibit 003.\n" +
+          "Then Exhibit 001.\n" +
+          "Then Exhibit 006."
+        );
+      }
+    }, 300);
+  }
+}
+
+
+/* =========================================
+   SECRET EVIDENCE 007
+========================================= */
+
+function showSecretEvidence() {
+  const overlay = document.getElementById("contentOverlay");
+  const content = document.getElementById("content");
+
+  overlay.classList.add("active");
+
+  content.innerHTML = `
+    <div class="final-report">
+
+      <div class="file-tag">
+        CLASSIFIED // EVIDENCE 007
+      </div>
+
+      <h2>⚠️ UNLISTED EVIDENCE</h2>
+
+      <div class="divider"></div>
+
+      <p>
+        This file was not included in the original
+        investigation.
+      </p>
+
+      <p>
+        Somehow, you found it anyway.
+      </p>
+
+      <div class="finding">
+        SECRET CLEARANCE GRANTED
+      </div>
+
+      <p>
+        <strong>
+          Congratulations, Investigator.
+        </strong>
+      </p>
+
+      <p>
+        You were paying closer attention than expected.
+      </p>
+
+      <button
+        class="action-button"
+        onclick="openSecretMessage()">
+        OPEN SECRET FILE →
+      </button>
+
+    </div>
+  `;
+}
+
+
+/* =========================================
+   SECRET MESSAGE
+========================================= */
+
+function openSecretMessage() {
+  const content = document.getElementById("content");
+
+  content.innerHTML = `
+    <div class="final-report">
+
+      <div class="file-tag">
+        EVIDENCE 007 // Manya's Note
+      </div>
+
+      <h2>ONE LAST THING...</h2>
+
+      <div class="divider"></div>
+
+      <p>
+        You weren't actually supposed to find this.
+      </p>
+
+      <p>
+        But if you did...
+      </p>
+
+      <p>
+        I guess you deserve one more little secret.
+      </p>
+
+      <div class="finding">
+        YOU ARE VERY, VERY LOVED.
+      </div>
+
+      <p>
+        And yes, investigator...
+        you officially found something
+        hidden just for you. ❤️
+      </p>
+
+      <p>
+        — Manya
+      </p>
+
+      <button
+        class="action-button"
+        onclick="showEvidence()">
+        RETURN TO EVIDENCE →
+      </button>
+
+    </div>
+  `;
+}
 
 /* =========================================
    BASIC SCREEN CONTROL
@@ -309,12 +493,13 @@ function showEvidence() {
 ========================================= */
 
 function verifyEvidence(card, number) {
-
   if (card.classList.contains("verified")) {
     return;
   }
 
   card.classList.add("verified");
+
+  checkSecretSequence(number);
 
   const status = card.querySelector(".evidence-status");
 
